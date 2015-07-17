@@ -18,6 +18,7 @@ void ofApp::setup(){
      m1.loadImage("joy.png");
      
      scale = 0.4;
+    closeSize = 120;
 }
 
 void ofApp::update(){
@@ -64,17 +65,17 @@ void ofApp::draw(){
         ofDrawBitmapString(ofToString(artk.getMarkerID(i)) + " " + ofToString(corners[0].x) + "," + ofToString(corners[0].y) + " " + ofToString(corners[1].x) + "," + ofToString(corners[1].y) + " " + ofToString(corners[2].x) + "," + ofToString(corners[2].y) + " " + ofToString(corners[3].x) + "," + ofToString(corners[3].y), pos.x, pos.y);
         ofSetColor(255,0,0);
         if (dir == 0)
-            ofLine(pos.x, pos.y, pos.x, pos.y + 60);
+            ofLine(pos.x, pos.y, pos.x, pos.y + closeSize / 2);
         if (dir == 1)
-            ofLine(pos.x, pos.y, pos.x + 60, pos.y);
+            ofLine(pos.x, pos.y, pos.x + closeSize / 2, pos.y);
         if (dir == 2)
-            ofLine(pos.x, pos.y, pos.x, pos.y - 60);
+            ofLine(pos.x, pos.y, pos.x, pos.y - closeSize / 2);
         if (dir == 3)
-            ofLine(pos.x, pos.y, pos.x - 60, pos.y);
+            ofLine(pos.x, pos.y, pos.x - closeSize / 2, pos.y);
         ofSetColor(255, 255, 255);
         ofImage drone;
         drone.setFromPixels(vid.getPixelsRef());
-        drone.crop(pos.x - 60, pos.y - 60, 120, 120);
+        drone.crop(pos.x - closeSize /2, pos.y - closeSize / 2, closeSize, closeSize);
         drone.rotate90(dir);
         drone.draw(i * 120, 0);
     }

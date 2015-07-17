@@ -14,6 +14,7 @@ public:
     void draw();
     
     int camW, camH;
+    int closeSize;
     float scale;
     
     ImageFromCamera cam;
