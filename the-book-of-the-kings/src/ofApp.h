@@ -26,7 +26,6 @@ public:
     ImageFromCamera cam;
     ofVideoGrabber vid;
     
-    ofImage m1;
     ofSoundPlayer sound;
     ofxCvGrayscaleImage cvImage;
     ofxCv::ContourFinder contourFinder;

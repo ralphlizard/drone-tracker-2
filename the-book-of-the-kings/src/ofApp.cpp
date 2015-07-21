@@ -15,7 +15,6 @@ void ofApp::setup(){
     artk.setThreshold(0);
 
     ofDisableSmoothing();
-    m1.loadImage("joy.png");
     sound.loadSound("shutter.wav");
      
     scale = 0.4;
@@ -60,36 +59,20 @@ void ofApp::draw(){
      cam.image.draw(camW * scale, 0, camW * scale, camH * scale) ;
      cvImage.draw(0, 0, camW * scale, camH * scale);
 
-    //artoolkit detection
-    
+    //ARTK DEBUGGING STUFF
     int numDetected = artk.getNumDetectedMarkers();
     ofScale (scale, scale, scale);
     
     for(int i=0; i<numDetected; i++) {
         ofPoint pos = artk.getDetectedMarkerCenter(i);
 //        float dir = artk.getOrientationQuaternion(i).x();
-        float dir = artk.getDetectedMarkerDirection(i);
-        vector<ofPoint> corners;
-        artk.getDetectedMarkerCorners(i, corners);
-        ofDrawBitmapString(ofToString(artk.getMarkerID(i)) + " " + ofToString(corners[0].x) + "," + ofToString(corners[0].y) + " " + ofToString(corners[1].x) + "," + ofToString(corners[1].y) + " " + ofToString(corners[2].x) + "," + ofToString(corners[2].y) + " " + ofToString(corners[3].x) + "," + ofToString(corners[3].y), pos.x, pos.y);
         ofSetColor(255,0,0);
-        if (dir == 0)
-            ofLine(pos.x, pos.y, pos.x, pos.y + closeSize / 2);
-        if (dir == 1)
-            ofLine(pos.x, pos.y, pos.x + closeSize / 2, pos.y);
-        if (dir == 2)
-            ofLine(pos.x, pos.y, pos.x, pos.y - closeSize / 2);
-        if (dir == 3)
-            ofLine(pos.x, pos.y, pos.x - closeSize / 2, pos.y);
         ofSetColor(255, 255, 255);
         ofImage drone;
         drone.setFromPixels(vid.getPixelsRef());
         drone.crop(pos.x - closeSize /2, pos.y - closeSize / 2, closeSize, closeSize);
-        drone.rotate90(dir);
         drone.draw(i * 120, 0);
     }
-    
-    m1.draw(0, 0);
     
      for(int p = 0; p < contourFinder.getPolylines().size(); p++) {
      
@@ -166,6 +149,7 @@ void ofApp::record(){
     for(int i=0; i<numDetected; i++) {
         ofPoint pos = artk.getDetectedMarkerCenter(i);
         //        float dir = artk.getOrientationQuaternion(i).x();
+        // SWITCH ME OUT COACH
         float dir = artk.getDetectedMarkerDirection(i);
         int id = artk.getMarkerID(i);
         data[ofToString(id)][time]["position"] = ofToString(pos.x) + ", " + ofToString(pos.y);
