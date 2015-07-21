@@ -65,14 +65,20 @@ void ofApp::draw(){
     
     for(int i=0; i<numDetected; i++) {
         ofPoint pos = artk.getDetectedMarkerCenter(i);
-//        float dir = artk.getOrientationQuaternion(i).x();
-        ofSetColor(255,0,0);
-        ofSetColor(255, 255, 255);
+        // float dir = artk.getOrientationQuaternion(i).x();
+        // SWITCH ME OUT COACH
+        float dir = artk.getDetectedMarkerDirection(i);
+        int id = artk.getMarkerID(i);
         ofImage drone;
+
+        untimedData[ofToString(id)]["position"] = ofToString(pos.x) + ", " + ofToString(pos.y);
+        untimedData[ofToString(id)]["rotation"] = ofToString(dir);
+
         drone.setFromPixels(vid.getPixelsRef());
         drone.crop(pos.x - closeSize /2, pos.y - closeSize / 2, closeSize, closeSize);
         drone.draw(i * 120, 0);
     }
+
     
      for(int p = 0; p < contourFinder.getPolylines().size(); p++) {
      
@@ -144,18 +150,14 @@ void ofApp::mouseReleased(int x, int y, int button){
 void ofApp::record(){
     ofFile newfile(ofToDataPath("coordinates.json"), ofFile::WriteOnly);
     string time = ofToString(ofGetElapsedTimef());
-    
-    int numDetected = artk.getNumDetectedMarkers();
-    for(int i=0; i<numDetected; i++) {
-        ofPoint pos = artk.getDetectedMarkerCenter(i);
-        //        float dir = artk.getOrientationQuaternion(i).x();
-        // SWITCH ME OUT COACH
-        float dir = artk.getDetectedMarkerDirection(i);
-        int id = artk.getMarkerID(i);
-        data[ofToString(id)][time]["position"] = ofToString(pos.x) + ", " + ofToString(pos.y);
-        data[ofToString(id)][time]["rotation"] = ofToString(dir);
+    for(Json::ValueIterator i = untimedData.begin() ; i != untimedData.end(); i++) {
+        string id = i.key().asString();
+        data[id][time]["position"] = untimedData[id]["position"];
+        data[ofToString(id)][time]["rotation"] = untimedData[id]["rotation"];
+        cout << data;
     }
-    newfile << data;
+    if (data != ofxJSONElement::null)
+        newfile << data;
     sound.play();
 }
 

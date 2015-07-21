@@ -31,7 +31,7 @@ public:
     ofxCv::ContourFinder contourFinder;
     
     ofxARToolkitPlus artk;
-    ofxJSONElement data;
+    ofxJSONElement data, untimedData;
 
     ofxCvColorImage colorImage;
     ofxCvGrayscaleImage grayImage;
