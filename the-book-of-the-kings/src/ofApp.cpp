@@ -15,9 +15,11 @@ void ofApp::setup(){
     artk.setThreshold(0);
 
     ofDisableSmoothing();
-     m1.loadImage("joy.png");
+    m1.loadImage("joy.png");
+    sound.loadSound("shutter.wav");
      
-     scale = 0.4;
+    scale = 0.4;
+    timeInterval = 5;
     closeSize = 120;
 }
 
@@ -42,6 +44,13 @@ void ofApp::update(){
     //grayImage.mirror(false, true); //do this if using mirror
     grayImage.threshold(mouseX);
     artk.update(grayImage.getPixels());
+    
+    //record on interval
+    if (ofGetElapsedTimef() - lastEventTime > timeInterval && recording)
+    {
+        lastEventTime = ofGetElapsedTimef();
+        record();
+    }
 }
 
 void ofApp::draw(){
@@ -51,8 +60,8 @@ void ofApp::draw(){
      cam.image.draw(camW * scale, 0, camW * scale, camH * scale) ;
      cvImage.draw(0, 0, camW * scale, camH * scale);
 
-//    artk.draw(0, 0, camW * scale, camH * scale);
-
+    //artoolkit detection
+    
     int numDetected = artk.getNumDetectedMarkers();
     ofScale (scale, scale, scale);
     
@@ -140,5 +149,29 @@ void ofApp::draw(){
      
      }
 
+}
+
+void ofApp::mouseReleased(int x, int y, int button){
+    if (recording)
+        record();
+    else
+        recording = true;
+}
+
+void ofApp::record(){
+    ofFile newfile(ofToDataPath("coordinates.json"), ofFile::WriteOnly);
+    string time = ofToString(ofGetElapsedTimef());
+    
+    int numDetected = artk.getNumDetectedMarkers();
+    for(int i=0; i<numDetected; i++) {
+        ofPoint pos = artk.getDetectedMarkerCenter(i);
+        //        float dir = artk.getOrientationQuaternion(i).x();
+        float dir = artk.getDetectedMarkerDirection(i);
+        int id = artk.getMarkerID(i);
+        data[ofToString(id)][time]["position"] = ofToString(pos.x) + ", " + ofToString(pos.y);
+        data[ofToString(id)][time]["rotation"] = ofToString(dir);
+    }
+    newfile << data;
+    sound.play();
 }
 
